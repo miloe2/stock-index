@@ -1,8 +1,7 @@
---only-binary=:all:
-
+numpy==1.24.4
+pandas==2.0.3
 fastapi==0.110.0
 uvicorn[standard]==0.29.0
 httpx==0.27.0
 python-dotenv==1.0.1
-fear-and-greed
-pandas==2.0.3
+fear-and-greed==0.4
