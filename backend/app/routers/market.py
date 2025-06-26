@@ -46,7 +46,8 @@ async def get_fear_and_greed():
 
 @router.get("/market/score")
 async def get_index_score():
-    # await fetch_index_score()
-    result = fetch_index_score()
-    # return {"succes"}
-    return {result}
+    try:
+        result = await fetch_index_score()
+        return {"score": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"지표 계산 실패: {str(e)}")
