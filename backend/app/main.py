@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from app.db import connect_db
+from app.db.connect import connect_db
 from app.routers import market
 
 env_path = Path(__file__).parent.parent / ".env"
