@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from app.services.vix import fetch_latest_vix, fetch_range_vix
 from app.services.sp500 import fetch_sp500_deviation
-from app.services.fear_and_greed import fetch_fear_and_greed
+from app.services.fng import fetch_fear_and_greed
 from app.services.index_score import fetch_index_score
 
 
@@ -39,9 +39,12 @@ async def get_sp500_deviation():
 
 
 @router.get("/market/fgi")
-async def get_fear_and_greed():
-    result = fetch_fear_and_greed()
-    return {result}
+async def get_fgi():
+    try:
+        result = await fetch_fear_and_greed()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/market/score")
