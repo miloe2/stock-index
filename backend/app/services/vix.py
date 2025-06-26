@@ -50,6 +50,6 @@ async def fetch_range_vix(start_date: str, end_date: str):
             observations = data.get("observations", [])
             if not observations:
                 return None
-            return observations  # 가장 최신 데이터
+            return observations
     except httpx.HTTPStatusError as e:
         raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
