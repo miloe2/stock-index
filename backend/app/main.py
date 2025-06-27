@@ -3,6 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from app.db.config import Base, engine
+
 
 from app.db.connect import connect_db
 from app.db.init_db import init_db
@@ -17,6 +19,7 @@ def startup_event():
     if conn:
         print("📡 DB 연결 확인 완료")
         init_db(conn)
+        Base.metadata.create_all(bind=engine)
         conn.close()
     else:
         print("⚠️ DB 연결 실패, 앱 내부 기능에 영향 있을 수 있음")
