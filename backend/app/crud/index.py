@@ -1,5 +1,6 @@
 from app.db.database import SessionLocal
 from app.db.models.index import IndexTypes, IndexData, IndexScore
+from app.schemas.index_type import IndexTypeCreate
 from datetime import date
 
 from typing import Optional
@@ -7,19 +8,12 @@ from sqlalchemy.orm import Session
 from datetime import date
 
 
-# IndexTypes 저장
-def save_index_type(
-    code: str, name: Optional[str] = None, description: Optional[str] = None
-):
-    db: Session = SessionLocal()
-    try:
-        db_type = IndexTypes(code=code, name=name, description=description)
-        db.add(db_type)
-        db.commit()
-        db.refresh(db_type)
-        return db_type
-    finally:
-        db.close()
+async def save_index_type(db: Session, data: IndexTypeCreate):
+    db_obj = IndexTypes(code=data.code, name=data.name, description=data.description)
+    db.add(db_obj)
+    db.commit()
+    db.refresh(db_obj)
+    return db_obj
 
 
 # IndexData 저장
