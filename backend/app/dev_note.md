@@ -25,3 +25,9 @@
 | **41~60**  | 중립 (Neutral)           | ⚪️ 보유 or 관망         | 불확실한 구간, 추세 확인 필요    |
 | **61~80**  | 탐욕 (Greed)             | 🟠 수익 실현 고려         | 가격이 과도하게 오른 구간       |
 | **81~100** | 극단적 탐욕 (Extreme Greed) | ❌ 분할 매도 또는 전량 매도 고려 | 시장 과열, 거품 주의 필요      |
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=stockindex_db
+DB_USER=postgres
+DB_PASS=postgres

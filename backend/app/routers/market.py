@@ -3,6 +3,7 @@ from app.services.vix import fetch_latest_vix, fetch_range_vix
 from app.services.sp500 import fetch_sp500_deviation
 from app.services.fng import fetch_fear_and_greed
 from app.services.index_score import fetch_index_score
+from app.crud.index import save_index_type
 
 
 router = APIRouter()
@@ -15,6 +16,15 @@ async def get_vix():
         raise HTTPException(status_code=404, detail="VIX data not found")
     # return {"date": latest["date"], "value": latest["value"]}
     return latest
+
+
+@router.post("/market/type")
+async def insert_type():
+    try:
+        res = await save_index_type()
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/market/vix/range")
