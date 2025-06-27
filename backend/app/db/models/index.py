@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, Date, Double
-from .config import Base
+from ..database import Base
 
 
 class IndexTypes(Base):

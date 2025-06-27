@@ -1,5 +1,5 @@
-from .config import SessionLocal
-from .models import IndexTypes, IndexData, IndexScore
+from app.db.database import SessionLocal
+from app.db.models.index import IndexTypes, IndexData, IndexScore
 from datetime import date
 
 from typing import Optional
@@ -57,15 +57,3 @@ def save_index_score(
         return db_score
     finally:
         db.close()
-
-
-# def save_index_score(index_type: str, value: float, d: date):
-#     db = SessionLocal()
-#     try:
-#         db_metric = IndexMetric(index_type=index_type, value=value, date=d)
-#         db.add(db_metric)
-#         db.commit()
-#         db.refresh(db_metric)
-#         return db_metric
-#     finally:
-#         db.close()

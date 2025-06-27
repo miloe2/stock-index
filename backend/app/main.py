@@ -3,10 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from app.db.config import Base, engine
 
 
-from app.db.connect import connect_db
 from app.db.init_db import init_db
 from app.routers import market
 
@@ -15,20 +13,15 @@ load_dotenv(dotenv_path=env_path)
 
 
 def startup_event():
-    conn = connect_db()
-    if conn:
-        print("📡 DB 연결 확인 완료")
-        init_db(conn)
-        Base.metadata.create_all(bind=engine)
-        conn.close()
-    else:
-        print("⚠️ DB 연결 실패, 앱 내부 기능에 영향 있을 수 있음")
+    print("🚀 DB 초기화 시작")
+    init_db()
+    print("✅ 테이블 확인 및 생성 완료")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # When service starts.
-    # startup_event()
+    startup_event()
 
     yield
 
