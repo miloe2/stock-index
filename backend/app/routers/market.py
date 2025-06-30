@@ -2,10 +2,12 @@ from fastapi import APIRouter, HTTPException, Query, Depends
 from sqlalchemy.orm import Session
 from app.services.vix import fetch_latest_vix, fetch_range_vix
 from app.services.sp500 import fetch_sp500_deviation
-from app.services.fng import fetch_fear_and_greed
+from app.services.fgi import fetch_fear_and_greed
 from app.services.index_score import fetch_index_score
-from app.crud.index import save_index_type
+from app.crud.index import save_index_type, save_index_data
 from app.schemas.index_type import IndexTypeCreate
+from app.schemas.index_data import IndexDataCreate
+
 from app.db.database import get_db
 
 
@@ -25,6 +27,16 @@ async def get_vix():
 async def insert_type(data: IndexTypeCreate, db: Session = Depends(get_db)):
     try:
         res = await save_index_type(db, data)
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# 지수 넣기
+@router.post("/market/index-data")
+async def insert_type(data: IndexDataCreate, db: Session = Depends(get_db)):
+    try:
+        res = await save_index_data(db, data)
         return res
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

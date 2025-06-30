@@ -12,3 +12,4 @@ venv/
 
 # dotenv
 .env
+.dev_note.md

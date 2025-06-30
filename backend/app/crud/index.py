@@ -1,6 +1,7 @@
 from app.db.database import SessionLocal
 from app.db.models.index import IndexTypes, IndexData, IndexScore
 from app.schemas.index_type import IndexTypeCreate
+from app.schemas.index_data import IndexDataCreate
 from datetime import date
 
 from typing import Optional
@@ -16,21 +17,17 @@ async def save_index_type(db: Session, data: IndexTypeCreate):
     return db_obj
 
 
-# IndexData 저장
-def save_index_data(
-    index_type_id: str, date_: date, value: float, created_at: Optional[date] = None
-):
-    db: Session = SessionLocal()
-    try:
-        db_data = IndexData(
-            index_type_id=index_type_id, date=date_, value=value, created_at=created_at
-        )
-        db.add(db_data)
-        db.commit()
-        db.refresh(db_data)
-        return db_data
-    finally:
-        db.close()
+async def save_index_data(db: Session, data: IndexDataCreate):
+    # code로 index_type_id 조회
+    index_type = db.query(IndexTypes).filter_by(code=data.code.upper()).first()
+    if not index_type:
+        raise ValueError(f"Invalid index code: {data.code}")
+
+    db_obj = IndexData(index_type_id=index_type.id, date=data.date, value=data.value)
+    db.add(db_obj)
+    db.commit()
+    db.refresh(db_obj)
+    return db_obj
 
 
 # IndexScore 저장
