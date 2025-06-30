@@ -1,21 +1,17 @@
-from datetime import date, timedelta
-import httpx
 from fastapi import HTTPException
+from datetime import date, timedelta
 import time
+import httpx
 from app.config.settings import FRED_API_KEY
+from app.utils.cache_store import CacheStore
 
-# ---- 캐시 저장소 ----
-_cache_store = {
-    "vix": {"data": None, "last_fetched": 0},
-    "vix_range": {},
-}
 
-CACHE_TTL = 60 * 0.5  # 1시간
+CACHE_TTL = 60 * 60  # 1시간
 
 
 async def fetch_latest_vix():
     now = time.time()
-    cache_entry = _cache_store["vix"]
+    cache_entry = CacheStore._store.setdefault("vix", {"data": None, "last_fetched": 0})
 
     if cache_entry["data"] and (now - cache_entry["last_fetched"]) < CACHE_TTL:
         print("🚀 Returned VIX from cache")
@@ -54,8 +50,7 @@ async def fetch_latest_vix():
 async def fetch_range_vix(start_date: str, end_date: str):
     now = time.time()
     key = f"vix_range_{start_date}_{end_date}"
-
-    cache_entry = _cache_store.setdefault(key, {"data": None, "last_fetched": 0})
+    cache_entry = CacheStore._store.setdefault(key, {"data": None, "last_fetched": 0})
 
     if cache_entry["data"] and (now - cache_entry["last_fetched"]) < CACHE_TTL:
         print(f"🚀 Returned VIX range from cache for {key}")
