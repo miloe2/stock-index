@@ -5,6 +5,9 @@ import httpx
 from app.config.settings import FRED_API_KEY
 from app.utils.cache_store import CacheStore
 
+from sqlalchemy.orm import Session
+from app.schemas.index_data import IndexDataCreate
+from app.db.models.index import IndexTypes, IndexData, IndexScore
 
 CACHE_TTL = 60 * 60  # 1시간
 
@@ -78,5 +81,41 @@ async def fetch_range_vix(start_date: str, end_date: str):
             cache_entry["last_fetched"] = now
             print(f"🔄 Fetched VIX range from API and cached for {key}")
             return observations
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
+
+
+async def get_and_save_vix(db: Session, start_date: str, end_date: str):
+    url = "https://api.stlouisfed.org/fred/series/observations"
+    params = {
+        "series_id": "VIXCLS",
+        "api_key": FRED_API_KEY,
+        "file_type": "json",
+        "observation_start": start_date,
+        "observation_end": end_date,
+    }
+
+    try:
+        async with httpx.AsyncClient() as client:
+            res = await client.get(url, params=params)
+            res.raise_for_status()
+            data = res.json()
+            observations = data.get("observations", [])
+            if not observations:
+                return None
+
+            for item in observations:
+                if item["value"] == ".":
+                    continue
+
+                db_obj = IndexData(
+                    index_type_id=1, date=item["date"], value=item["value"]
+                )
+                db.add(db_obj)
+                db.commit()
+                db.refresh(db_obj)
+                print(item, {"status": "success"})
+
+            return {"status": "success"}
     except httpx.HTTPStatusError as e:
         raise HTTPException(status_code=e.response.status_code, detail=e.response.text)

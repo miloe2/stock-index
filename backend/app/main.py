@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 from app.db.init_db import init_db
 from app.routers import market
+from app.routers import test
 
 env_path = Path(__file__).parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
@@ -30,6 +31,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(market.router, prefix="/api")
+app.include_router(test.router, prefix="/api")
 
 # ✅ CORS 설정 추가
 app.add_middleware(
